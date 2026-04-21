@@ -170,7 +170,7 @@ class Database {
 
         switch ($driver) {
             case 'mysql':
-                $dsn = "mysql:host=$host;port=$port;dbname=$dbname_value;charset=$charset";
+                 $dsn = "mysql:host=$host;port=$port;dbname=$dbname_value;charset=$charset;unix_socket=";
                 break;
             case 'pgsql':
                 $dsn = "pgsql:host=$host;port=$port;dbname=$dbname_value;user=$username;password=$password";
