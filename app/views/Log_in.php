@@ -1,16 +1,45 @@
-
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
+// Redirect if already logged in
+if (isset($_SESSION['user'])) {
+    header("Location: " . url('/'));
+    exit();
+}
+
+$error = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    if (!empty($email) && !empty($password)) {
+        $db = new Database;
         
-?>
+        // Search for the user by email
+        // Note: Using your specific column name 'cfrj_email'
+        $user = $db->table('cfrj_users')->where('cfrj_email', $email)->get();
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link href="<?= base_url() ?>public/css/output.css" rel="stylesheet">
-    <title>Login</title>
-</head>
+        if ($user) {
+            // Check the password 
+            // If you used password_hash in registration, use: if(password_verify($password, $user['cfrj_password']))
+            if ($password === $user['cfrj_password']) {
+                $_SESSION['user'] = $user;
+                header("Location: " . url('/'));
+                exit();
+            } else {
+                $error = "Invalid password. Please try again.";
+            }
+        } else {
+            $error = "No account found with that email.";
+        }
+    } else {
+        $error = "Please fill in all fields.";
+    }
+}
+?>
 
 <body class="bg-pink-50 flex items-center justify-center min-h-screen">
 
