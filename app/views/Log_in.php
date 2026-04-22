@@ -3,7 +3,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. If already logged in, go to dashboard
 if (isset($_SESSION['user'])) {
     header("Location: " . url('/'));
     exit();
@@ -15,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    // 2. YOUR HARDCODED ADMIN CHECK
+    // 1. HARDCODED ADMIN CHECK
     if ($email === 'admin@gmail.com' && $password === 'admin123') {
         $_SESSION['user'] = [
             'cfrj_email' => $email,
@@ -28,33 +27,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // 3. IF NOT ADMIN, CHECK DATABASE
+    // 2. DATABASE CHECK
     if (!empty($email) && !empty($password)) {
-        try {
-            $db = new Database;
-            // Using first() is safer than get() for single users
-            $user = $db->table('cfrj_users')->where('cfrj_email', $email)->first();
+        $db = new Database;
+        
+        // Use get() since first() doesn't exist
+        $results = $db->table('cfrj_users')->where('cfrj_email', $email)->get();
 
-            if ($user) {
-                if ($password === $user['cfrj_password']) {
-                    $_SESSION['user'] = $user;
-                    header("Location: " . url('/'));
-                    exit();
-                } else {
-                    $error = "Incorrect password.";
-                }
+        // Check if $results is an array and has at least one user
+        if ($results && is_array($results)) {
+            // Grab the first user from the list
+            $user = $results[0]; 
+
+            if ($password === $user['cfrj_password']) {
+                $_SESSION['user'] = $user;
+                header("Location: " . url('/'));
+                exit();
             } else {
-                $error = "Account not found.";
+                $error = "Incorrect password.";
             }
-        } catch (Exception $e) {
-            $error = "Database Error: " . $e->getMessage();
+        } else {
+            $error = "Account not found.";
         }
     } else {
         $error = "Please fill in all fields.";
     }
 }
 ?>
-
+    
 <!DOCTYPE html>
 <html lang="en">
 <head>
