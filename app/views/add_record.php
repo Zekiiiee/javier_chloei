@@ -1,38 +1,42 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
+// 1. SECURITY CHECK (Before any HTML)
+if (!isset($_SESSION['user']) || $_SESSION['user']['cfrj_role'] !== 'admin') {
+    header("Location: " . url('/'));
+    exit();
+}
+
+// 2. FORM PROCESSING
+$message = '';
+if($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $db = new Database;
+    $data = [
+        'cfrj_last_name'  => $_POST['last_name'],
+        'cfrj_first_name' => $_POST['first_name'],
+        'cfrj_gender'     => $_POST['gender'],
+        'cfrj_address'    => $_POST['address'],
+        'cfrj_email'      => $_POST['email'],
+        'cfrj_password'   => $_POST['password'],
+        'cfrj_role'       => 'user'
+    ];
+    
+    if($db->table('cfrj_users')->insert($data)) { 
+        header('Location: ' . url('/')); 
+        exit; 
+    }
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <link href="<?= base_url() ?>public/css/output.css" rel="stylesheet">
     <title>New User</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-if (!isset($_SESSION['user']) || $_SESSION['user']['cfrj_role'] !== 'admin') {
-    header("Location: " . url('/'));
-    exit();
-}
-$message = '';
-if($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $db = new Database;
-    $data = [
-    'cfrj_last_name'  => $_POST['last_name'],
-    'cfrj_first_name' => $_POST['first_name'],
-    'cfrj_gender'     => $_POST['gender'],
-    'cfrj_address'    => $_POST['address'],
-    'cfrj_email'      => $_POST['email'],
-    'cfrj_password'   => $_POST['password'],
-    'cfrj_role'       => 'user'
-];
-    if($db->table('cfrj_users')->insert($data)) { header('Location:' . url('/')); exit; }
-}
-?>
 
 <body class="bg-pink-50 min-h-screen flex items-center justify-center p-6">
     <div class="max-w-md w-full bg-white rounded-[2.5rem] p-10 shadow-2xl shadow-pink-200/50 border border-white">
@@ -57,5 +61,5 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="<?= url('/') ?>" class="block text-center text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest mt-6 transition-colors">Discard</a>
         </form>
     </div>
-</body>                                                                                                                                                                                                                                                    <script src="https://cdn.tailwindcss.com"></script>
+</body>
 </html>
