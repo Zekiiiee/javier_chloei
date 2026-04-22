@@ -14,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    // 1. ADMIN CHECK
     if ($email === 'admin@gmail.com' && $password === 'admin123') {
         $_SESSION['user'] = [
             'cfrj_email' => $email,
@@ -26,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // 2. USER DATABASE CHECK
     if (!empty($email) && !empty($password)) {
         $db = new Database;
         $results = $db->table('cfrj_users')->where('cfrj_email', $email)->get();
@@ -82,8 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="relative">
                 <input type="password" id="loginPass" name="password" placeholder="Password"
-                    class="w-full p-3 border border-pink-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-300">
-                <button type="button" onclick="togglePass('loginPass', 'eyeIcon1')" class="absolute right-4 top-1/2 -translate-y-1/2 text-pink-400">
+                    class="w-full p-3 border border-pink-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-300 pr-12">
+                <button type="button" onclick="togglePass('loginPass', 'eyeIcon1')" class="absolute right-4 top-1/2 -translate-y-1/2 text-pink-400 focus:outline-none">
                     <svg id="eyeIcon1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.644C3.483 8.653 7.379 6 12 6s8.517 2.653 9.964 6.378a1.012 1.012 0 010 .644C20.517 15.347 16.621 18 12 18s-8.517-2.653-9.964-6.378z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
