@@ -1,25 +1,18 @@
 <?php
-
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <link href="<?= base_url() ?>public/css/output.css" rel="stylesheet">
-    <title>Edit User</title>
-</head>
-
-<?php
+ob_start(); // Buffer output to prevent header issues
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// 1. SECURITY & LOGIC (Before any HTML is sent)
 if (!isset($_SESSION['user']) || $_SESSION['user']['cfrj_role'] !== 'admin') {
     header("Location: " . url('/'));
     exit();
 }
+
 $db = new Database;
 $user = $db->table('cfrj_users')->where('cfrj_id', segment(2))->get();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
     $data = [
         'cfrj_last_name' => $_POST['last_name'],
@@ -29,16 +22,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'cfrj_email' => $_POST['email']
     ];
     $db->table('cfrj_users')->where('cfrj_id', segment(2))->update($data);
-    header('Location:' . url('/')); exit;
+    header('Location:' . url('/')); 
+    exit;
 }
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link href="<?= base_url() ?>public/css/output.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Edit User</title>
+</head>
 
 <body class="bg-pink-50 min-h-screen flex items-center justify-center p-6">
     <div class="max-w-md w-full bg-white rounded-[2.5rem] p-10 shadow-2xl shadow-pink-200/50 border border-white">
         <?php if ($user): ?>
             <div class="text-center mb-8">
                 <div class="inline-block p-4 bg-pink-50 text-pink-600 rounded-2xl mb-4">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
                 </div>
                 <h1 class="text-2xl font-black text-pink-900 tracking-tight">MODIFY USER</h1>
                 <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">User ID: #<?= $user['cfrj_id'] ?></p>
@@ -59,7 +63,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </button>
                 <a href="<?= url('/') ?>" class="block text-center text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest mt-6 transition-colors">Abort Changes</a>
             </form>
+        <?php else: ?>
+            <div class="text-center">
+                <p class="text-pink-600 font-bold">User not found.</p>
+                <a href="<?= url('/') ?>" class="text-xs text-slate-400 uppercase mt-4 block">Back to Home</a>
+            </div>
         <?php endif; ?>
     </div>
-</body>                                                                                                                                                                                                           <script src="https://cdn.tailwindcss.com"></script>
+</body>
 </html>
+<?php ob_end_flush(); ?>
