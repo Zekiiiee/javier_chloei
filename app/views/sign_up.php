@@ -49,8 +49,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input name="email" type="email" placeholder="Email Contact" required class="w-full bg-pink-50 border-none rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-pink-500/20 transition-all"/>
             
             <div class="relative">
-                <input id="signupPass" name="password" type="password" placeholder="Password" required class="w-full bg-pink-50 border-none rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-pink-500/20 transition-all"/>
-                <button type="button" onclick="togglePass('signupPass', 'eyeIcon2')" class="absolute right-4 top-1/2 -translate-y-1/2 text-pink-400">
+                <input id="signupPass" name="password" type="password" placeholder="Password" required class="w-full bg-pink-50 border-none rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-pink-500/20 transition-all pr-12"/>
+                <button type="button" onclick="togglePass('signupPass', 'eyeIcon2')" class="absolute right-4 top-1/2 -translate-y-1/2 text-pink-400 focus:outline-none">
                     <svg id="eyeIcon2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.644C3.483 8.653 7.379 6 12 6s8.517 2.653 9.964 6.378a1.012 1.012 0 010 .644C20.517 15.347 16.621 18 12 18s-8.517-2.653-9.964-6.378z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
