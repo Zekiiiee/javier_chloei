@@ -14,11 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    // 1. HARDCODED ADMIN CHECK
+    // 1. ADMIN CHECK
     if ($email === 'admin@gmail.com' && $password === 'admin123') {
         $_SESSION['user'] = [
             'cfrj_email' => $email,
-            'cfrj_password' => $password,
             'cfrj_role' => 'admin',
             'cfrj_first_name' => 'Admin',
             'cfrj_last_name' => 'User'
@@ -27,20 +26,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // 2. DATABASE CHECK
+    // 2. USER DATABASE CHECK
     if (!empty($email) && !empty($password)) {
         $db = new Database;
-        
-        // Use get() since first() doesn't exist
         $results = $db->table('cfrj_users')->where('cfrj_email', $email)->get();
 
-        // Check if $results is an array and has at least one user
-        if ($results && is_array($results)) {
-            // Grab the first user from the list
-            $user = $results[0]; 
+        // Check if we found someone
+        if ($results) {
+            // Handle if results is a single object/array or a list
+            $user = is_array($results) && isset($results[0]) ? $results[0] : $results;
 
-            if ($password === $user['cfrj_password']) {
-                $_SESSION['user'] = $user;
+            // Extract the DB password (works for both Array and Object)
+            $dbPassword = is_array($user) ? $user['cfrj_password'] : $user->cfrj_password;
+
+            if ($password === $dbPassword) {
+                // Save the user to session (ensuring it's an array for consistency)
+                $_SESSION['user'] = (array)$user;
                 header("Location: " . url('/'));
                 exit();
             } else {
